@@ -97,7 +97,8 @@ class PacmanEnv(gym.Env):
         #if self.layout is None:
         #    self.chooseLayout(randomLayout=True)
 
-        self.chooseLayout(randomLayout=True)
+        # self.chooseLayout(randomLayout=True)
+        self.chooseLayout(randomLayout=False, chosenLayout='smallClassic')
 
         self.step_counter = 0
         self.cum_reward = 0
@@ -166,7 +167,6 @@ class PacmanEnv(gym.Env):
                     'l': self.step_counter
                 }]
             }
-
 
         pacman_action = PACMAN_ACTIONS[action]
 
