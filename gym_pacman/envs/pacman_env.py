@@ -26,7 +26,7 @@ PACMAN_ACTIONS = ['North', 'South', 'East', 'West', 'Stop']
 PACMAN_DIRECTIONS = ['North', 'South', 'East', 'West']
 ROTATION_ANGLES = [0, 180, 90, 270]
 
-MAX_EP_LENGTH = 100
+MAX_EP_LENGTH = 500
 
 import os
 fdir = '/'.join(os.path.split(__file__)[:-1])
@@ -182,7 +182,7 @@ class PacmanEnv(gym.Env):
         self.cum_reward += reward
         # reward shaping for illegal actions
         if illegal_action:
-            reward -= 10
+            reward -= 100
 
         done = self.game.state.isWin() or self.game.state.isLose()
 

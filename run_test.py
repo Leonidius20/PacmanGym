@@ -1,6 +1,7 @@
+import numpy as np
 import rl.core
 from matplotlib import pyplot as plt
-from rl.callbacks import ModelIntervalCheckpoint, FileLogger
+from rl.callbacks import ModelIntervalCheckpoint, FileLogger, Callback
 
 import gym_pacman  #  in order for env to get registered
 from image_utils import center_crop, scale_image
@@ -32,9 +33,10 @@ class PacmanImageProcessor(rl.core.Processor):
         # Next we normalize the image from -1 to +1
         image = (image - 128) / 128 - 1
 
-        print(image.shape[1], image.shape[0])
-
         return image.transpose()  # bc width and height were swapped
+
+    def process_reward(self, reward):
+        return np.clip(reward, -1., 1.)
 
 
 env = gym.make('BerkeleyPacmanPO-v0')
@@ -87,6 +89,27 @@ dqn = DQNAgent(model=model, nb_actions=nb_actions, policy=policy, memory=memory,
                train_interval=4, delta_clip=1.)
 dqn.compile(Adam(lr=.00025), metrics=['mae'])
 
+class TestLogger2(Callback):
+    """ Logger Class for Test """
+
+    def on_train_begin(self, logs={}):
+        """ Print logs at beginning of training"""
+        print('Testing for {} episodes ...'.format(self.params['nb_episodes']))
+
+    def on_episode_end(self, episode, logs={}):
+        """ Print logs at end of each episode """
+        template = 'Episode {0}: reward: {1:.3f}, steps: {2}'
+        variables = [
+            episode + 1,
+            logs['episode_reward'],
+            logs['nb_steps'],
+        ]
+        print(template.format(*variables))
+
+    def on_action_end(self, action, logs={}):
+        """ Called at end of each action for each callback in callbackList"""
+        print(action)
+
 
 if IS_TRAINING_MODE:
     # Okay, now it's time to learn something! We capture the interrupt exception so that training
@@ -94,21 +117,21 @@ if IS_TRAINING_MODE:
     weights_filename = 'dqn_weights.h5f'
     checkpoint_weights_filename = 'dqn_weights_{step}.h5f'
     log_filename = 'dqn_log.json'
-    callbacks = [ModelIntervalCheckpoint(checkpoint_weights_filename, interval=250000)]
+    callbacks = [ModelIntervalCheckpoint(checkpoint_weights_filename, interval=250)]
     callbacks += [FileLogger(log_filename, interval=100)]
-    dqn.fit(env, callbacks=callbacks, nb_steps=1750000, log_interval=10000)
+    dqn.fit(env, callbacks=callbacks, nb_steps=500, log_interval=250, action_repetition=1, visualize=True)
 
     # After training is done, we save the final weights one more time.
     dqn.save_weights(weights_filename, overwrite=True)
 
     # Finally, evaluate our algorithm for 10 episodes.
-    dqn.test(env, nb_episodes=10, visualize=False)
+    dqn.test(env, nb_episodes=10, visualize=True, nb_max_start_steps=0, action_repetition=1, callbacks=[TestLogger2()])
 else:  # testing mode!
-    weights_filename = 'dqn_weights.h5f'
+    weights_filename = 'dqn_weights_10000.h5f'
     #if args.weights:
     #    weights_filename = args.weights
     dqn.load_weights(weights_filename)
-    dqn.test(env, nb_episodes=10, visualize=True)
+    dqn.test(env, nb_episodes=10, visualize=True, nb_max_start_steps=0, action_repetition=1, callbacks=[TestLogger2()])
 
 
 
