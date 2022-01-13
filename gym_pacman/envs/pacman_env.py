@@ -17,7 +17,6 @@ from gym.utils import seeding
 import json
 import os
 
-
 DEFAULT_GHOST_TYPE = 'DirectionalGhost'
 
 MAX_GHOSTS = 5
@@ -50,8 +49,8 @@ class PacmanEnv(gym.Env):
     MAX_MAZE_SIZE = (7, 7)
     num_envs = 1
 
-    #observation_space = spaces.Box(low=0, high=255,
-    #        shape=(84, 84, 3), dtype=np.uint8)
+    observation_space = spaces.Box(low=0, high=255,
+            shape=(470, 180, 3), dtype=np.uint8)
 
     def __init__(self):
         self.action_space = spaces.Discrete(4) # up, down, left right
@@ -134,7 +133,8 @@ class PacmanEnv(gym.Env):
 
         self.cum_reward = 0
 
-        self.initial_info = {
+        self.initial_info = {}
+        '''{
             'past_loc': [self.location_history[-1]],
             'curr_loc': [self.location_history[-1]],
             'past_orientation': [[self.orientation_history[-1]]],
@@ -143,7 +143,7 @@ class PacmanEnv(gym.Env):
             'ghost_positions': [self.ghostLocations],
             'ghost_in_frame': [self.ghostInFrame],
             'step_counter': [[0]],
-        }
+        }'''
 
         return self._get_image()
 
@@ -151,7 +151,8 @@ class PacmanEnv(gym.Env):
         # implement code here to take an action
         if self.step_counter >= MAX_EP_LENGTH or self.done:
             self.step_counter += 1
-            return np.zeros(self.observation_space.shape), 0.0, True, {
+            return np.zeros(self.observation_space.shape), 0.0, True, {}
+            '''{
                 'past_loc': [self.location_history[-2]],
                 'curr_loc': [self.location_history[-1]],
                 'past_orientation': [[self.orientation_history[-2]]],
@@ -166,7 +167,7 @@ class PacmanEnv(gym.Env):
                     'r': self.cum_reward,
                     'l': self.step_counter
                 }]
-            }
+            }'''
 
         pacman_action = PACMAN_ACTIONS[action]
 
@@ -218,7 +219,7 @@ class PacmanEnv(gym.Env):
                 'r': self.cum_reward,
                 'l': self.step_counter
             }]
-        return self._get_image(), reward, done, info
+        return self._get_image(), reward, done, {} # info
 
     def get_action_meanings(self):
         return [PACMAN_ACTIONS[i] for i in self._action_set]
@@ -237,8 +238,9 @@ class PacmanEnv(gym.Env):
             DEFAULT_GRID_SIZE_X *  (self.location[0] + 2),
             DEFAULT_GRID_SIZE_Y *  (self.layout.height - (self.location[1] - 1.2))]
         # extent = tuple([int(e) for e in extent])
-        # self.image_sz = (84,84)
+        self.image_sz = (470, 180)
         # image = image.crop(extent).resize(self.image_sz)
+        image = image.resize(self.image_sz)
         return np.array(image)
 
     def render(self, mode='human'):
