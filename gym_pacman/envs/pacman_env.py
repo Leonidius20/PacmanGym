@@ -50,8 +50,8 @@ class PacmanEnv(gym.Env):
     MAX_MAZE_SIZE = (7, 7)
     num_envs = 1
 
-    observation_space = spaces.Box(low=0, high=255,
-            shape=(84, 84, 3), dtype=np.uint8)
+    #observation_space = spaces.Box(low=0, high=255,
+    #        shape=(84, 84, 3), dtype=np.uint8)
 
     def __init__(self):
         self.action_space = spaces.Discrete(4) # up, down, left right
@@ -236,9 +236,9 @@ class PacmanEnv(gym.Env):
             DEFAULT_GRID_SIZE_Y *  (self.layout.height - (self.location[1] + 2.2)),
             DEFAULT_GRID_SIZE_X *  (self.location[0] + 2),
             DEFAULT_GRID_SIZE_Y *  (self.layout.height - (self.location[1] - 1.2))]
-        extent = tuple([int(e) for e in extent])
-        self.image_sz = (84,84)
-        image = image.crop(extent).resize(self.image_sz)
+        # extent = tuple([int(e) for e in extent])
+        # self.image_sz = (84,84)
+        # image = image.crop(extent).resize(self.image_sz)
         return np.array(image)
 
     def render(self, mode='human'):

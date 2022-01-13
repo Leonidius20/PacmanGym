@@ -26,7 +26,7 @@ from .game import Directions
 DEFAULT_GRID_SIZE = 30.0
 INFO_PANE_HEIGHT = 40
 BACKGROUND_COLOR = formatColor(0,0,0)
-WALL_COLOR = formatColor(142.0/255.0, 126.0/255.0, 247/255.0)
+WALL_COLOR = formatColor(255.0/255.0, 0.0/255.0, 0.0/255.0)
 INFO_PANE_COLOR = formatColor(.4,.4,0)
 SCORE_COLOR = formatColor(.9, .9, .9)
 PACMAN_OUTLINE_WIDTH = 2
@@ -60,7 +60,7 @@ SCARED_COLOR = formatColor(1,1,1)
 
 GHOST_VEC_COLORS = map(colorToVector, GHOST_COLORS)
 
-PACMAN_COLOR = formatColor(255.0/255.0,255.0/255.0,61.0/255)
+PACMAN_COLOR = formatColor(255.0/255.0,255.0/255.0,255.0/255)
 PACMAN_SCALE = 0.5
 #pacman_speed = 0.25
 
