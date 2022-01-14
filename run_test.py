@@ -46,7 +46,7 @@ WINDOW_LENGTH = 4  # number of last frames used
 
 input_shape = (WINDOW_LENGTH, 110, 37)  # 110x37 the size of image, 4 last images are used to get result
 
-IS_TRAINING_MODE = True
+IS_TRAINING_MODE = False
 
 # showing what the input image looks like
 # plt.imshow(PacmanImageProcessor().process_observation(env.reset()))
@@ -119,15 +119,18 @@ if IS_TRAINING_MODE:
     log_filename = 'dqn_log.json'
     callbacks = [ModelIntervalCheckpoint(checkpoint_weights_filename, interval=250)]
     callbacks += [FileLogger(log_filename, interval=100)]
-    dqn.fit(env, callbacks=callbacks, nb_steps=500, log_interval=250, action_repetition=1, visualize=True)
+
+    # dqn.load_weights('dqn_weights_8000.h5f')
+
+    dqn.fit(env, callbacks=callbacks, nb_steps=1750000, log_interval=10000, action_repetition=1, visualize=False)
 
     # After training is done, we save the final weights one more time.
     dqn.save_weights(weights_filename, overwrite=True)
 
     # Finally, evaluate our algorithm for 10 episodes.
-    dqn.test(env, nb_episodes=10, visualize=True, nb_max_start_steps=0, action_repetition=1, callbacks=[TestLogger2()])
+    dqn.test(env, nb_episodes=10, visualize=False, nb_max_start_steps=0, action_repetition=1, callbacks=[TestLogger2()])
 else:  # testing mode!
-    weights_filename = 'dqn_weights_10000.h5f'
+    weights_filename = 'dqn_weights_96750.h5f'
     #if args.weights:
     #    weights_filename = args.weights
     dqn.load_weights(weights_filename)
